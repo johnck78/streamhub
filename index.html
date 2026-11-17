@@ -58,7 +58,7 @@ area.querySelectorAll('[data-restore]').forEach(btn=>btn.onclick=()=>{const t=it
 }
 function score(t){const rating=Math.min(10,t.rating||5);const freshness=Math.max(0,1-(2026-(+t.year||2020))/17);const unseen=seen.has(t.id)?-5:0;const saved=watch.has(t.id)?-.35:0;return rating*.55+freshness*1.3+Math.random()*3.5+unseen+saved}
 function choose(){const c=available().filter(t=>!seen.has(t.id));const pool=c.length?c:available();if(!pool.length){current=null;renderFeature();return}const ranked=pool.map(t=>({t,s:score(t)})).sort((a,b)=>b.s-a.s);const top=ranked.slice(0,Math.min(8,ranked.length));current=top[Math.floor(Math.random()*Math.min(5,top.length))].t;seen.add(current.id);store();renderFeature()}
-function renderFeature(){if(!current){$('feature').innerHTML='<p>No matches. Re-enable a service or refresh the catalog.</p>';$('featureActions').innerHTML='';return}const t=current;$('feature').innerHTML=`${poster(t)}<div><div class="muted">${t.type==='tv'?'TV Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}</div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.overview||'Discover something different tonight.')}</p><div>${t.providers.map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join('')}</div><div class="muted">${live?'Listed as subscription streaming in the US':'Illustrative demo availability'}</div></div>`;$('featureActions').innerHTML=`<button class="secondary" id="savePick">${watch.has(t.id)?'✓ In Watchlist':'+ Watchlist'}</button><button class="secondary" id="watchedPick">${watched.has(t.id)?'✓ Watched':'Mark Watched'}</button><button class="secondary" id="skipPick">${dismissed.has(t.id)?'✓ Not Interested':'Not Interested'}</button>`;
+function renderFeature(){if(!current){$('feature').innerHTML='<p>No matches. Re-enable a service or refresh the catalog.</p>';$('featureActions').innerHTML='';return}const t=current;$('feature').innerHTML=`${poster(t)}<div><div class="muted">${t.type==='tv'?'TV Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}</div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.overview||'Discover something different tonight.')}</p><div>${t.providers.map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join('')}</div><div class="muted">${live?'Subscription availability checked in the US':'Illustrative demo availability'}</div></div>`;$('featureActions').innerHTML=`<button class="secondary" id="savePick">${watch.has(t.id)?'✓ In Watchlist':'+ Watchlist'}</button><button class="secondary" id="watchedPick">${watched.has(t.id)?'✓ Watched':'Mark Watched'}</button><button class="secondary" id="skipPick">${dismissed.has(t.id)?'✓ Not Interested':'Not Interested'}</button>`;
 $('savePick').onclick=()=>preferenceAction(t,'watchlist');$('watchedPick').onclick=()=>preferenceAction(t,'watched');$('skipPick').onclick=()=>preferenceAction(t,'not_interested')}
 function tile(t){return `<button class="tile" data-id="${escapeHtml(t.id)}"><div>${t.poster?`<img src="https://image.tmdb.org/t/p/w342${escapeHtml(t.poster)}" alt="" loading="lazy">`:`<div class="placeholder">${escapeHtml(t.title)}</div>`}</div><b>${escapeHtml(t.title)}</b><small>${t.type==='tv'?'Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}${watch.has(t.id)?' · ♥':''}</small><span class="provider">${t.providers.map(escapeHtml).join(' · ')}</span></button>`}
 function renderSpotlights(){
@@ -184,6 +184,8 @@ cloud.from('streamhub_title_preferences').select('*').eq('user_id',cloudUser.id)
 cloud.from('streamhub_user_settings').select('services').eq('user_id',cloudUser.id).maybeSingle()
 ]);
 if(prefs.error)throw prefs.error;if(settings.error)throw settings.error;
+const firstSync=(prefs.data||[]).length===0;
+const previousWatch=[...watch],previousWatched=[...watched],previousDismissed=[...dismissed];
 watch=new Set();watched=new Set();dismissed=new Set();cloudTitles=new Map();
 for(const p of prefs.data||[]){
 cloudTitles.set(p.title_id,p);
@@ -192,6 +194,9 @@ if(p.watched)watched.add(p.title_id);
 if(p.not_interested)dismissed.add(p.title_id)
 }
 if(settings.data?.services){enabled=settings.data.services;localStorage.setItem('streamhub_services',JSON.stringify(enabled))}
+if(firstSync){watch=new Set(previousWatch);watched=new Set(previousWatched);dismissed=new Set(previousDismissed);
+for(const id of new Set([...watch,...watched,...dismissed])){const t=titleMeta.get(id)||{id,title:id,type:id.startsWith('tv-')?'tv':'movie'};await cloudSave(t)}}
+if(!settings.data?.services)await cloudSaveServices();
 store();renderServices();renderTiles();choose();
 cloudMessage('Cloud sync active for '+cloudUser.email+'. Your preferences are stored centrally.');
 }catch(e){cloudMessage('Could not load cloud preferences: '+e.message+'. Run the setup SQL in your Supabase project.',true)}
