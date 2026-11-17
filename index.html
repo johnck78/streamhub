@@ -35,8 +35,8 @@ function renderFeature(){if(!current){$('feature').innerHTML='<p>No matches. Re-
 function tile(t){return `<button class="tile" data-id="${escapeHtml(t.id)}"><div>${t.poster?`<img src="https://image.tmdb.org/t/p/w342${escapeHtml(t.poster)}" alt="" loading="lazy">`:`<div class="placeholder">${escapeHtml(t.title)}</div>`}</div><b>${escapeHtml(t.title)}</b><small>${t.type==='tv'?'Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}${watch.has(t.id)?' · ♥':''}</small><span class="provider">${t.providers.map(escapeHtml).join(' · ')}</span></button>`}
 function renderSpotlights(){
 const demos= !live;
-const popular=available().filter(t=>t.type==='movie').sort((a,b)=>(a.popularRank??999)-(b.popularRank??999)).slice(0,12);
-const trending=available().filter(t=>t.type==='tv').sort((a,b)=>(a.trendingRank??999)-(b.trendingRank??999)).slice(0,12);
+const popular=available().filter(t=>t.type==='movie'&&(!live||t.popularRank!==undefined)).sort((a,b)=>(a.popularRank??999)-(b.popularRank??999)).slice(0,12);
+const trending=available().filter(t=>t.type==='tv'&&(!live||t.trendingRank!==undefined)).sort((a,b)=>(a.trendingRank??999)-(b.trendingRank??999)).slice(0,12);
 for(const [area,items,note,label] of [['popularTiles',popular,'popularNote','popular movies'],['trendingTiles',trending,'trendingNote','trending series']]){
 const element=$(area);element.innerHTML=items.length?items.map(tile).join(''):'<div class="empty">No '+label+' on the selected services yet. Try selecting more services or refreshing.</div>';
 $(note).textContent=demos?'Demo examples • Connect TMDB for current rankings':items.length+' titles • US subscription availability checked on TMDB';
