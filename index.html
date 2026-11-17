@@ -61,7 +61,7 @@ for(const [kind,data] of [['movie',movieProviders],['tv',tvProviders]])for(const
 const queries=[];
 for(const kind of ['movie','tv']){
 if(!ids[kind].length)continue;
-queries.push(tmdb('discover/'+kind,{sort_by:'popularity.desc',watch_region:'US',with_watch_monetization_types:'flatrate',with_watch_providers:[...new Set(ids[kind])].join('|'),page:1}).then(data=>(data.results||[]).map(x=>({id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[]})))));
+queries.push(tmdb('discover/'+kind,{sort_by:'popularity.desc',watch_region:'US',with_watch_monetization_types:'flatrate',with_watch_providers:[...new Set(ids[kind])].join('|'),page:1}).then(data=>(data.results||[]).map(x=>({id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[]}))));
 }
 const discovery=(await Promise.all(queries)).flat();
 const make=(x,kind,rank)=>({id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[],...(kind==='movie'?{popularRank:rank}:{trendingRank:rank})});
