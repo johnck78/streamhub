@@ -1,6 +1,6 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>StreamHub v0.4</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>StreamHub v0.5</title><style>
 :root{font-family:Inter,ui-sans-serif,system-ui,Arial;background:#0a101b;color:#edf3ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 80% 0,#1b3153 0%,#0a101b 46%)}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,select:focus-visible,.tile:focus-visible{outline:3px solid #6bc8ff;outline-offset:3px}header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 5vw 20px;border-bottom:1px solid #26364c}h1{font-size:29px;margin:0;letter-spacing:-1px}h1 span{color:#66d5eb}.tag{font-size:12px;color:#9eb2cc;letter-spacing:1px}.status{font-size:13px;color:#b4c8e3}main{max-width:1450px;margin:auto;padding:30px 5vw 70px}.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:25px}.panel{border:1px solid #293c58;background:#111c2eec;border-radius:22px;padding:25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#80d6f1;font-weight:700}h2{font-size:clamp(27px,3vw,46px);margin:12px 0;letter-spacing:-1.3px}p{color:#b6c6dc;line-height:1.55}.controls{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}.chip{border:1px solid #38506e;border-radius:25px;background:#1a2a40;padding:11px 15px;font-size:14px}.chip strong{color:#fff}.primary{background:#5cbdd5;color:#08121f;border:0;border-radius:12px;padding:13px 21px;font-weight:800}.secondary{background:#263b55;border:1px solid #3d5a76;border-radius:12px;padding:12px 17px}.actions{display:flex;gap:11px;flex-wrap:wrap}.muted{font-size:12px;color:#93a8c2}.feature{display:flex;align-items:center;gap:20px;min-height:290px}.poster{width:150px;aspect-ratio:2/3;object-fit:cover;border-radius:12px;background:linear-gradient(150deg,#435f88,#151f38);flex-shrink:0}.feature h3{font-size:27px;line-height:1.15;margin:5px 0}.pill{display:inline-block;background:#21394e;color:#8be6f7;border-radius:6px;font-size:12px;padding:5px 8px;margin:3px 5px 4px 0}.rowhead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:32px 0 16px}h3{margin:0}.search{border:1px solid #39516d;border-radius:12px;background:#121f31;color:white;padding:12px 14px;width:min(370px,100%)}.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:15px}.tile{border:1px solid #2c405d;background:#15243a;border-radius:15px;padding:10px;text-align:left;display:flex;flex-direction:column;gap:7px;min-height:290px}.tile img,.placeholder{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:9px;background:linear-gradient(140deg,#334c72,#132135)}.placeholder{display:grid;place-items:center;padding:10px;text-align:center;color:#acc1da}.tile b{font-size:14px}.tile small{color:#a8bdd6}.tile .provider{color:#81d3e5;font-size:12px;line-height:1.4}.section-note{font-size:13px;color:#a5bad3;margin:0 0 16px}.spotlight{margin-top:26px}.spotlight .tiles{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.spotlight .rowhead{margin-bottom:6px}.spotlight h3{font-size:23px}.spotlight .section-note{margin:5px 0 15px}.settings{margin-top:30px;padding:22px;border:1px solid #293d57;border-radius:16px;background:#101a2b}.settings summary{cursor:pointer;font-weight:700}.settings .inner{margin-top:18px}.settings label{display:block;font-size:13px;color:#c2d0e3;margin-bottom:8px}.settings input{max-width:480px;width:100%;background:#0a1423;border:1px solid #3e5672;border-radius:8px;color:#fff;padding:12px}.services{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 16px}.service{border:1px solid #34506b;background:#16283d;padding:9px 11px;border-radius:10px;font-size:13px}.service.active{background:#244c61;border-color:#5ac8e3}.empty{padding:32px;text-align:center;color:#b4c9df;border:1px dashed #375371;border-radius:13px}.foot{font-size:12px;color:#8ca2bb;margin-top:28px}.foot a{color:#a8e4fb}.topline{display:flex;align-items:center;gap:14px;justify-content:space-between}.watchbadge{color:#a9edc0}.loading{opacity:.6;pointer-events:none}.error{color:#ffb2b2}.hide{display:none!important}@media(max-width:800px){.hero{grid-template-columns:1fr}.feature{min-height:230px}.poster{width:110px}.feature h3{font-size:22px}header{padding:20px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}main{padding:20px}}
-</style></head><body><header><div><h1>STREAM<span>HUB</span></h1><div class="tag">FIND YOUR NEXT FAVORITE</div></div><div class="status" id="status">Demo mode · No API key needed</div></header><main><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls"><div class="chip">Type: <strong>Movies + TV</strong></div><div class="chip">Mood: <strong>Surprise Me</strong></div><div class="chip">Length: <strong>Any Length</strong></div></div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div><details class="settings" id="settings"><summary>⚙ Live catalog and streaming services</summary><div class="inner"><label for="apiKey">TMDB API v3 key (optional, for live discovery)</label><input id="apiKey" type="password" autocomplete="off" placeholder="Paste your TMDB v3 API key"/><p class="muted">Saved in this browser only. For a deployed app, use a private backend rather than shipping shared credentials inside an app. Plex integration will follow in a later version.</p><button class="primary" id="connect">Connect to TMDB</button><p id="connectMessage" role="status" aria-live="polite" class="muted">Enter your key and select Connect. A status message will appear here.</p><button class="secondary" id="disconnect">Return to demo</button><p class="muted">Services to include in live recommendations (US catalog):</p><div class="services" id="services"></div><p class="muted">Streaming data provided by JustWatch through TMDB; availability can change. This prototype checks individual titles' US streaming provider listings before displaying matches.</p></div></details><p class="foot">This product uses the TMDB API but is not endorsed or certified by TMDB. Availability data from JustWatch via TMDB. <a href="https://www.themoviedb.org" target="_blank" rel="noreferrer">TMDB</a> · StreamHub v0.4 · Discovery only, no playback links.</p></main><script>
+</style></head><body><header><div><h1>STREAM<span>HUB</span></h1><div class="tag">FIND YOUR NEXT FAVORITE</div></div><div class="status" id="status">Demo mode · No API key needed</div></header><main><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls"><div class="chip">Type: <strong>Movies + TV</strong></div><div class="chip">Mood: <strong>Surprise Me</strong></div><div class="chip">Length: <strong>Any Length</strong></div></div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div><details class="settings" id="settings"><summary>⚙ Live catalog and streaming services</summary><div class="inner"><label for="apiKey">TMDB API v3 key (optional, for live discovery)</label><input id="apiKey" type="password" autocomplete="off" placeholder="Paste your TMDB v3 API key"/><p class="muted">Saved in this browser only. For a deployed app, use a private backend rather than shipping shared credentials inside an app. Plex integration will follow in a later version.</p><button class="primary" id="connect">Connect to TMDB</button><p id="connectMessage" role="status" aria-live="polite" class="muted">Enter your key and select Connect. A status message will appear here.</p><button class="secondary" id="disconnect">Return to demo</button><p class="muted">Services to include in live recommendations (US catalog):</p><div class="services" id="services"></div><p class="muted">Streaming data provided by JustWatch through TMDB; availability can change. This prototype checks individual titles' US streaming provider listings before displaying matches.</p></div></details><p class="foot">This product uses the TMDB API but is not endorsed or certified by TMDB. Availability data from JustWatch via TMDB. <a href="https://www.themoviedb.org" target="_blank" rel="noreferrer">TMDB</a> · StreamHub v0.5 · Discovery only, no playback links.</p></main><script>
 // Some browsers (particularly iOS opening file:// URLs) disallow localStorage altogether.
 const memoryStore = {};
 const safeStorage = {
@@ -34,13 +34,18 @@ function choose(){const c=available().filter(t=>!seen.has(t.id));const pool=c.le
 function renderFeature(){if(!current){$('feature').innerHTML='<p>No matches. Re-enable a service or refresh the catalog.</p>';$('featureActions').innerHTML='';return}const t=current;$('feature').innerHTML=`${poster(t)}<div><div class="muted">${t.type==='tv'?'TV Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}</div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.overview||'Discover something different tonight.')}</p><div>${t.providers.map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join('')}</div><div class="muted">${live?'Listed as subscription streaming in the US':'Illustrative demo availability'}</div></div>`;$('featureActions').innerHTML=`<button class="secondary" id="savePick">${watch.has(t.id)?'✓ In Watchlist':'+ Watchlist'}</button><button class="secondary" id="skipPick">Not for me</button>`;$('savePick').onclick=()=>{watch.has(t.id)?watch.delete(t.id):watch.add(t.id);store();renderFeature();renderTiles()};$('skipPick').onclick=()=>{dismissed.add(t.id);store();choose();renderTiles()}}
 function tile(t){return `<button class="tile" data-id="${escapeHtml(t.id)}"><div>${t.poster?`<img src="https://image.tmdb.org/t/p/w342${escapeHtml(t.poster)}" alt="" loading="lazy">`:`<div class="placeholder">${escapeHtml(t.title)}</div>`}</div><b>${escapeHtml(t.title)}</b><small>${t.type==='tv'?'Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}${watch.has(t.id)?' · ♥':''}</small><span class="provider">${t.providers.map(escapeHtml).join(' · ')}</span></button>`}
 function renderSpotlights(){
-const demos= !live;
-const popular=available().filter(t=>t.type==='movie'&&(!live||t.popularRank!==undefined)).sort((a,b)=>(a.popularRank??999)-(b.popularRank??999)).slice(0,12);
-const trending=available().filter(t=>t.type==='tv'&&(!live||t.trendingRank!==undefined)).sort((a,b)=>(a.trendingRank??999)-(b.trendingRank??999)).slice(0,12);
-for(const [area,items,note,label] of [['popularTiles',popular,'popularNote','popular movies'],['trendingTiles',trending,'trendingNote','trending series']]){
-const element=$(area);element.innerHTML=items.length?items.map(tile).join(''):'<div class="empty">No '+label+' on the selected services yet. Try selecting more services or refreshing.</div>';
-$(note).textContent=demos?'Demo examples • Connect TMDB for current rankings':items.length+' titles • US subscription availability checked on TMDB';
-element.querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});
+const a=available();
+const groups=[
+['popularTiles',a.filter(t=>t.type==='movie'&&(!live||t.popularRank!==undefined)).sort((x,y)=>(x.popularRank??999)-(y.popularRank??999)).slice(0,12),'popularNote','Ranked by TMDB movie popularity'],
+['trendingTiles',a.filter(t=>t.type==='tv'&&(!live||t.trendingRank!==undefined)).sort((x,y)=>(x.trendingRank??999)-(y.trendingRank??999)).slice(0,12),'trendingNote','Ranked by TMDB weekly TV trends'],
+['newTiles',live?a.filter(t=>t.newRank!==undefined).sort((x,y)=>x.newRank-y.newRank).slice(0,12):[],'newNote','Released in the last 7 days, not necessarily newly added to a service'],
+['gemsTiles',live?a.filter(t=>t.gemRank!==undefined).sort((x,y)=>x.gemRank-y.gemRank).slice(0,12):[],'gemsNote','Strong TMDB ratings with fewer votes than major blockbusters']
+];
+for(const [area,items,note,desc] of groups){
+const el=$(area);
+el.innerHTML=items.length?items.map(tile).join(''):'<div class="empty">'+(live?'No qualifying titles currently found on your selected services.':'Connect TMDB for live results in this category.')+'</div>';
+$(note).textContent=live?items.length+' available titles • '+desc:'Demo mode • Connect TMDB for live rankings';
+el.querySelectorAll('[data-id]').forEach(btn=>btn.onclick=()=>{current=items.find(t=>t.id===btn.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});
 }
 }
 function renderTiles(){renderSpotlights();const q=$('search').value.trim().toLowerCase();let items=available().filter(t=>(t.title+' '+t.overview).toLowerCase().includes(q));items=items.sort((a,b)=>Number(!!watch.has(b.id))-Number(!!watch.has(a.id))||b.rating-a.rating);$('tiles').innerHTML=items.length?items.map(tile).join(''):'<div class="empty">No matching titles in the current catalog.</div>';$('countLabel').textContent=`${items.length} ${live?'live catalog':'demo'} suggestions · Movies + TV · Any length`;$('tiles').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});if(showWatch)renderWatch()}
@@ -51,44 +56,76 @@ function norm(s){return (s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
 function mapProvider(name){const n=norm(name);if(n.includes('netflix'))return 'Netflix';if(n.includes('amazonprimevideo')||n==='primevideo')return 'Prime Video';if(n==='hulu')return 'Hulu';if(n.includes('disneyplus'))return 'Disney Plus';if(n==='max'||n==='hbomax')return 'Max';if(n.includes('peacock'))return 'Peacock';if(n.includes('paramountplus'))return 'Paramount Plus';if(n==='appletvplus'||n==='appletvplusamazonchannel')return 'Apple TV Plus';return null}
 async function loadLive(){
 if(!apiKey){$('connectMessage').textContent='Please enter your TMDB API key first.';return}
-document.body.classList.add('loading');$('status').textContent='Loading live recommendations…';$('connectMessage').textContent='Finding popular movies and trending series included with your subscriptions…';
+document.body.classList.add('loading');
+$('status').textContent='Loading your streaming discovery feed…';
+$('connectMessage').classList.remove('error');
+$('connectMessage').textContent='Checking live rankings, releases, ratings, and US streaming availability…';
 try{
+const now=new Date();
+const today=now.toISOString().slice(0,10);
+const weekAgo=new Date(now.getTime()-7*86400000).toISOString().slice(0,10);
 const [popularResponse,trendingResponse,movieProviders,tvProviders]=await Promise.all([
-tmdb('movie/popular',{region:'US',page:1}),tmdb('trending/tv/week',{page:1}),
-tmdb('watch/providers/movie',{watch_region:'US'}),tmdb('watch/providers/tv',{watch_region:'US'})]);
+tmdb('movie/popular',{region:'US',page:1}),
+tmdb('trending/tv/week',{page:1}),
+tmdb('watch/providers/movie',{watch_region:'US'}),
+tmdb('watch/providers/tv',{watch_region:'US'})]);
 const ids={movie:[],tv:[]};
-for(const [kind,data] of [['movie',movieProviders],['tv',tvProviders]])for(const p of data.results||[]){const mapped=mapProvider(p.provider_name);if(mapped&&enabled.includes(mapped))ids[kind].push(p.provider_id)}
+for(const [kind,data] of [['movie',movieProviders],['tv',tvProviders]])for(const p of data.results||[]){
+const mapped=mapProvider(p.provider_name);
+if(mapped&&enabled.includes(mapped))ids[kind].push(p.provider_id)
+}
+const make=(x,kind,rank,tag)=>({
+id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,
+year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',
+rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[],
+...(tag?{[tag]:rank}:{})});
+const source=[...(popularResponse.results||[]).map((x,i)=>make(x,'movie',i,'popularRank')),
+...(trendingResponse.results||[]).map((x,i)=>make(x,'tv',i,'trendingRank'))];
 const queries=[];
 for(const kind of ['movie','tv']){
 if(!ids[kind].length)continue;
-queries.push(tmdb('discover/'+kind,{sort_by:'popularity.desc',watch_region:'US',with_watch_monetization_types:'flatrate',with_watch_providers:[...new Set(ids[kind])].join('|'),page:1}).then(data=>(data.results||[]).map(x=>({id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[]}))));
+const common={watch_region:'US',with_watch_monetization_types:'flatrate',with_watch_providers:[...new Set(ids[kind])].join('|')};
+const add=(params,tag)=>queries.push(tmdb('discover/'+kind,{...common,...params}).then(d=>(d.results||[]).map((x,i)=>make(x,kind,i,tag))));
+add({sort_by:'popularity.desc',page:1},null);
+if(kind==='movie')add({sort_by:'primary_release_date.desc','primary_release_date.gte':weekAgo,'primary_release_date.lte':today,page:1},'newRank');
+else add({sort_by:'first_air_date.desc','first_air_date.gte':weekAgo,'first_air_date.lte':today,page:1},'newRank');
+add({sort_by:'vote_average.desc','vote_average.gte':7.4,'vote_count.gte':kind==='movie'?100:45,'vote_count.lte':kind==='movie'?1500:800,page:1},'gemRank');
 }
-const discovery=(await Promise.all(queries)).flat();
-const make=(x,kind,rank)=>({id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[],...(kind==='movie'?{popularRank:rank}:{trendingRank:rank})});
-const popular=(popularResponse.results||[]).map((x,i)=>make(x,'movie',i));
-const trending=(trendingResponse.results||[]).map((x,i)=>make(x,'tv',i));
+const responses=await Promise.allSettled(queries);
+for(const r of responses)if(r.status==='fulfilled')source.push(...r.value);
 const combined=new Map();
-for(const t of [...popular,...trending,...discovery]){if(!t.poster||!t.title)continue;const prior=combined.get(t.id);if(prior){if(t.popularRank!==undefined)prior.popularRank=t.popularRank;if(t.trendingRank!==undefined)prior.trendingRank=t.trendingRank}else combined.set(t.id,t)}
-const candidates=[...combined.values()].slice(0,74);
+for(const t of source){
+if(!t.poster||!t.title)continue;
+const prior=combined.get(t.id);
+if(prior){for(const rank of ['popularRank','trendingRank','newRank','gemRank'])if(t[rank]!==undefined)prior[rank]=t[rank]}
+else combined.set(t.id,t);
+}
+const candidates=[...combined.values()].slice(0,105);
 const checked=[];
-for(let i=0;i<candidates.length;i+=10){
-const batch=await Promise.all(candidates.slice(i,i+10).map(async t=>{try{
+for(let i=0;i<candidates.length;i+=12){
+const batch=await Promise.all(candidates.slice(i,i+12).map(async t=>{
+try{
 const detail=await tmdb(t.type+'/'+t.tmdbId+'/watch/providers');
 const listing=detail.results?.US?.flatrate||[];
 const matched=[...new Set(listing.map(p=>mapProvider(p.provider_name)).filter(n=>n&&enabled.includes(n)))];
-if(!matched.length)return null;return {...t,providers:matched}
-}catch(e){return null}}));
+if(!matched.length)return null;
+return {...t,providers:matched};
+}catch(e){return null}
+}));
 checked.push(...batch.filter(Boolean));
 }
-if(!checked.length)throw Error('No subscription titles found. Please try again or check your selected services.');
+if(!checked.length)throw Error('No subscription titles found. Check your services and try again.');
 catalog=checked;live=true;currentPage=1;
 try{localStorage.setItem('streamhub_tmdb_key',apiKey)}catch(e){}
-$('status').textContent='Live TMDB catalog · US subscription availability';
-$('connectMessage').textContent='Connected successfully. Popular movies and trending series are ready above.';
-$('modeNote').textContent='Live streaming availability from TMDB/JustWatch. Always double-check in the provider app.';
+$('status').textContent='Live TMDB • US subscription availability';
+$('connectMessage').textContent='Connected successfully. Live discovery categories are updated.';
+$('modeNote').textContent='US subscription listings via TMDB/JustWatch. New This Week means first release, not newly added to a provider. Availability may change.';
 renderTiles();choose();
-}catch(e){$('status').textContent='Could not load live data';$('connectMessage').textContent='Connection failed: '+e.message;$('connectMessage').classList.add('error')}
-finally{document.body.classList.remove('loading')}
+}catch(e){
+$('status').textContent='Could not load live data';
+$('connectMessage').textContent='Connection failed: '+e.message;
+$('connectMessage').classList.add('error');
+}finally{document.body.classList.remove('loading')}
 }
 function toDemo(){live=false;catalog=demo.slice();$('status').textContent='Demo mode · Illustrative availability';$('modeNote').textContent='Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.';renderTiles();choose()}
 $('surprise').onclick=choose;$('refresh').onclick=async()=>{if(live)await loadLive();else{catalog=demo.slice().sort(()=>Math.random()-.5);renderTiles();choose()}};$('search').addEventListener('input',renderTiles);$('watchToggle').onclick=()=>{showWatch=!showWatch;$('watchToggle').textContent=showWatch?'Hide watchlist':'Show watchlist';renderWatch()};$('apiKey').value=apiKey;$('connect').onclick=async()=>{$('connectMessage').classList.remove('error');apiKey=$('apiKey').value.trim();if(!apiKey){$('connectMessage').textContent='Paste your TMDB API v3 key into the field first.';return}await loadLive()};$('disconnect').onclick=()=>{localStorage.removeItem('streamhub_tmdb_key');apiKey='';$('apiKey').value='';toDemo()};renderServices();renderTiles();choose();if(apiKey){$('status').textContent='Restoring live TMDB catalog…';$('connectMessage').textContent='Restoring your live recommendations…';loadLive()}
