@@ -25,6 +25,7 @@ public class MainActivity extends Activity {
     private WebView webView;
     private FrameLayout root;
     private TextView errorView;
+    private boolean mainFrameLoadFailed = false;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +46,9 @@ public class MainActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         settings.setSupportMultipleWindows(false);
         webView.setWebViewClient(new WebViewClient() {
+            @Override public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                mainFrameLoadFailed = false;
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 // Navigation stays within the StreamHub website. CDN/API fetches remain normal subresource requests.
                 android.net.Uri uri = request.getUrl();
@@ -54,10 +58,10 @@ public class MainActivity extends Activity {
             @Override public void onPageFinished(WebView view, String url) {
                 // TV Mode is stored on the device for later launches.
                 view.evaluateJavascript("try{localStorage.setItem('streamhub_tv_mode','true');document.body.classList.add('tv-mode');document.getElementById('tvHelp').hidden=false;document.getElementById('tvToggle').textContent='TV Mode: On';document.getElementById('tvToggle').setAttribute('aria-pressed','true');document.getElementById('surprise').focus()}catch(e){}", null);
-                if (errorView != null) errorView.setVisibility(View.GONE);
+                if (!mainFrameLoadFailed && errorView != null) errorView.setVisibility(View.GONE);
             }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                if (request.isForMainFrame()) showError("StreamHub could not connect. Check Wi-Fi and press Select to retry.");
+                if (request.isForMainFrame()) { mainFrameLoadFailed = true; showError("StreamHub could not connect. Check Wi-Fi and press Select to retry."); }
             }
         });
         root.addView(webView, new FrameLayout.LayoutParams(-1, -1));
