@@ -27,10 +27,28 @@ jobs:
           gradle-version: '8.9'
       - name: Build Android TV debug APK
         run: gradle --no-daemon --stacktrace -p firetv assembleDebug
-      - name: Upload installable APK
+      - name: Verify compiled APK and record fingerprint
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="firetv/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          unzip -t "$APK" >/dev/null
+          AAPT="$ANDROID_HOME/build-tools/35.0.0/aapt"
+          "$AAPT" dump badging "$APK" | tee firetv/apk-package-info.txt
+          grep -q "package: name='com.streamhub.firetv'" firetv/apk-package-info.txt
+          sha256sum "$APK" | tee firetv/apk-sha256.txt
+          echo "### StreamHub Fire TV APK verified" >> "$GITHUB_STEP_SUMMARY"
+          echo "Package: com.streamhub.firetv" >> "$GITHUB_STEP_SUMMARY"
+          echo "APK: $(du -h "$APK" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+          echo "SHA-256: $(cut -d ' ' -f1 firetv/apk-sha256.txt)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload installable APK and verification report
         uses: actions/upload-artifact@v4
         with:
           name: StreamHub-FireTV-debug-APK
-          path: firetv/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            firetv/app/build/outputs/apk/debug/app-debug.apk
+            firetv/apk-package-info.txt
+            firetv/apk-sha256.txt
           if-no-files-found: error
           retention-days: 30
