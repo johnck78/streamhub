@@ -5,7 +5,7 @@
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <application android:allowBackup="false"
         android:label="StreamHub"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@drawable/streamhub_icon"
         android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:hardwareAccelerated="true">
