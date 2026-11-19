@@ -6,6 +6,7 @@
     <application android:allowBackup="false"
         android:label="StreamHub"
         android:icon="@drawable/streamhub_icon"
+        android:banner="@drawable/streamhub_banner"
         android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:hardwareAccelerated="true">
