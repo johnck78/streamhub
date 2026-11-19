@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Set up StreamHub on your TV</title>
+<style>
+:root{color-scheme:dark;font:17px system-ui;background:#0a101b;color:#edf3ff}
+body{margin:0;padding:24px}
+main{max-width:480px;margin:auto}
+form{display:grid;gap:10px}
+[hidden]{display:none!important}
+input,button{padding:12px;font:inherit;border-radius:8px;border:1px solid #66809d}
+input{background:#15243a;color:inherit}
+button{margin-top:10px;background:#66d5eb;color:#0a101b;font-weight:bold}
+a{color:#91e1fb}
+</style>
+<script src="device-pairing.js" defer></script>
+<script src="pair-phone.js" defer></script>
+</head><body><main>
+<h1>Set up StreamHub on your TV</h1>
+<p id="pairStatus" role="status">Open Device setup on your TV and scan its QR code.</p>
+<form id="pairForm" hidden>
+<label for="tmdb">TMDB API v3 key</label>
+<input id="tmdb" type="password" autocomplete="off" pattern="[A-Fa-f0-9]{32}" required>
+<a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener noreferrer">Find your TMDB key</a>
+<label for="email">StreamHub account email</label>
+<input id="email" type="email" autocomplete="username" required>
+<label for="password">StreamHub password</label>
+<input id="password" type="password" autocomplete="current-password" required>
+<button type="submit">Send to this TV</button>
+</form>
+</main></body></html>
