@@ -35,6 +35,7 @@ body.tv-mode :is(button,input,summary):focus{outline:3px solid #8deaff;outline-o
 <button class="secondary" data-tv-target="watchToggle">Watchlist</button>
 <button class="secondary" data-tv-target="manageToggle">Hidden titles</button>
 <button class="secondary" data-tv-target="sbUrl">Cloud Sync</button>
+<button class="secondary" data-tv-target="deviceSetupCode">Device setup</button>
 <button class="secondary" data-tv-target="settings">Live catalog &amp; services</button>
 </nav><div id="tvHelp" class="tv-help" hidden>Remote: Arrows move between controls. Use the shortcuts to jump to a section.</div><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls" aria-label="Recommendation filters">
 <button type="button" class="chip" id="filterType"></button>
@@ -42,6 +43,13 @@ body.tv-mode :is(button,input,summary):focus{outline:3px solid #8deaff;outline-o
 <button type="button" class="chip" id="filterLength"></button>
 </div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div>
 <section class="cloudbox" id="manageBox"><div class="rowhead" style="margin:0 0 12px"><h3>Watched &amp; Not Interested</h3><button class="secondary" id="manageToggle">Manage hidden titles</button></div><p class="section-note">These titles are filtered out of every recommendation section. You can restore them anytime.</p><div id="manageArea" class="hide"></div></section>
+<section class="cloudbox" id="deviceSetup">
+<h3>Device setup</h3><p>Use the Windows setup to transfer your saved settings.</p>
+<label for="deviceSetupCode">Settings transfer code</label>
+<input id="deviceSetupCode" type="password" autocomplete="off">
+<button type="button" class="secondary" id="applyDeviceSetup">Apply settings</button>
+<p id="deviceSetupStatus" role="status" aria-live="polite"></p>
+</section>
 <section class="cloudbox" id="cloudBox"><h3>Cloud Sync</h3><p class="section-note">Share your watchlist and preferences across your Fire TVs, phone, and computer. Requires your personal Supabase project.</p>
 <div id="cloudControls">
 <label for="sbUrl">Supabase Project URL</label><input id="sbUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="off">
@@ -327,6 +335,41 @@ if(!cloud||!cloudUser)return;
 const {error}=await cloud.from('streamhub_user_settings').upsert({user_id:cloudUser.id,services:enabled,updated_at:new Date().toISOString()},{onConflict:'user_id'});
 if(error)cloudMessage('Service sync failed: '+error.message,true);
 }
+$('applyDeviceSetup').onclick=async()=>{
+ const input=$('deviceSetupCode');
+ const status=$('deviceSetupStatus');
+ const button=$('applyDeviceSetup');
+ let settings;
+ try{
+  const code=input.value.trim();
+  if(!/^[A-Za-z0-9_-]{1,2048}$/.test(code))throw Error();
+  const base64=code.replace(/-/g,'+').replace(/_/g,'/');
+  const bytes=Uint8Array.from(atob(base64),character=>character.charCodeAt(0));
+  settings=JSON.parse(new TextDecoder().decode(bytes));
+  if(settings.version!==1||!/^[a-f0-9]{32}$/i.test(settings.tmdb)||
+   !/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(settings.url)||
+   !/^sb_publishable_[A-Za-z0-9_-]+$/.test(settings.key)||
+   typeof settings.email!=='string'||!settings.email.includes('@'))throw Error();
+ }catch{
+  status.textContent='Invalid settings code. Send it again from the Windows setup.';
+  return;
+ }
+ input.value='';
+ button.disabled=true;
+ status.textContent='Connecting your live catalog and cloud project…';
+ try{
+  apiKey=settings.tmdb;
+  $('apiKey').value=apiKey;
+  $('sbUrl').value=settings.url;
+  $('sbKey').value=settings.key;
+  $('sbEmail').value=settings.email;
+  await Promise.all([loadLive(),connectCloud(settings.url,settings.key)]);
+  status.textContent='Check the live catalog and Cloud Sync status below.';
+  if(cloud&&!cloudUser)focusTvControl($('sbPassword'));
+ }finally{
+  button.disabled=false;
+ }
+};
 $('sbConfigure').onclick=()=>connectCloud($('sbUrl').value,$('sbKey').value);
 $('sbForget').onclick=async()=>{if(cloud)await cloud.auth.signOut();cloud=null;cloudUser=null;cloudConfig=null;localStorage.removeItem('streamhub_cloud_config');$('cloudAuth').classList.add('hide');cloudMessage('Cloud connection removed from this browser. Existing cloud data was not deleted.')};
 $('sbPasswordLogin').onclick=async()=>{
