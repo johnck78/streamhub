@@ -35,7 +35,7 @@ body.tv-mode :is(button,input,summary):focus{outline:3px solid #8deaff;outline-o
 <button class="secondary" data-tv-target="watchToggle">Watchlist</button>
 <button class="secondary" data-tv-target="manageToggle">Hidden titles</button>
 <button class="secondary" data-tv-target="sbUrl">Cloud Sync</button>
-<button class="secondary" data-tv-target="deviceSetupCode">Device setup</button>
+<button class="secondary" data-tv-target="startPhonePairing">Device setup</button>
 <button class="secondary" data-tv-target="settings">Live catalog &amp; services</button>
 </nav><div id="tvHelp" class="tv-help" hidden>Remote: Arrows move between controls. Use the shortcuts to jump to a section.</div><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls" aria-label="Recommendation filters">
 <button type="button" class="chip" id="filterType"></button>
@@ -44,11 +44,20 @@ body.tv-mode :is(button,input,summary):focus{outline:3px solid #8deaff;outline-o
 </div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div>
 <section class="cloudbox" id="manageBox"><div class="rowhead" style="margin:0 0 12px"><h3>Watched &amp; Not Interested</h3><button class="secondary" id="manageToggle">Manage hidden titles</button></div><p class="section-note">These titles are filtered out of every recommendation section. You can restore them anytime.</p><div id="manageArea" class="hide"></div></section>
 <section class="cloudbox" id="deviceSetup">
-<h3>Device setup</h3><p>Use the Windows setup to transfer your saved settings.</p>
+<h3>Device setup</h3>
+<button type="button" class="primary" id="startPhonePairing">Set up with your phone</button>
+<p id="phonePairStatus" role="status" aria-live="polite"></p>
+<dialog id="phonePairDialog" aria-labelledby="phonePairTitle" style="color:#edf3ff;background:#15243a;border:1px solid #66809d;border-radius:12px;text-align:center">
+<h3 id="phonePairTitle">Scan with your phone camera</h3>
+<p>Keep this screen open. The QR code expires in five minutes.</p>
+<canvas id="phonePairQr" aria-label="StreamHub setup QR code" style="width:min(60vw,300px);display:block;margin:12px auto"></canvas>
+<button type="button" class="secondary" id="cancelPhonePairing">Cancel</button>
+</dialog>
+<details><summary>Use a saved Windows configuration</summary>
 <label for="deviceSetupCode">Settings transfer code</label>
 <input id="deviceSetupCode" type="password" autocomplete="off">
 <button type="button" class="secondary" id="applyDeviceSetup">Apply settings</button>
-<p id="deviceSetupStatus" role="status" aria-live="polite"></p>
+<p id="deviceSetupStatus" role="status" aria-live="polite"></p></details>
 </section>
 <section class="cloudbox" id="cloudBox"><h3>Cloud Sync</h3><p class="section-note">Share your watchlist and preferences across your Fire TVs, phone, and computer. Requires your personal Supabase project.</p>
 <div id="cloudControls">
@@ -372,10 +381,8 @@ $('applyDeviceSetup').onclick=async()=>{
 };
 $('sbConfigure').onclick=()=>connectCloud($('sbUrl').value,$('sbKey').value);
 $('sbForget').onclick=async()=>{if(cloud)await cloud.auth.signOut();cloud=null;cloudUser=null;cloudConfig=null;localStorage.removeItem('streamhub_cloud_config');$('cloudAuth').classList.add('hide');cloudMessage('Cloud connection removed from this browser. Existing cloud data was not deleted.')};
-$('sbPasswordLogin').onclick=async()=>{
+async function signInStreamHub(email,password){
 if(!cloud)return cloudMessage('Connect your Supabase project first.',true);
-const email=$('sbEmail').value.trim();
-const password=$('sbPassword').value;
 if(!email.includes('@')||!password)return cloudMessage('Enter your email address and password.',true);
 $('sbPasswordLogin').disabled=true;
 cloudMessage('Signing in securely…');
@@ -387,7 +394,8 @@ if(data?.user){cloudUser=data.user;await cloudLoad()}
 else cloudMessage('Sign-in did not create a session. Check the account confirmation status.',true);
 }catch(e){cloudMessage('Password sign-in failed: '+e.message+'. Check your credentials and confirm the user exists in Supabase Authentication → Users.',true)}
 finally{$('sbPasswordLogin').disabled=false}
-};
+}
+$('sbPasswordLogin').onclick=()=>signInStreamHub($('sbEmail').value.trim(),$('sbPassword').value);
 $('sbPassword').addEventListener('keydown',event=>{if(event.key==='Enter'){$('sbPasswordLogin').click()}});
 $('sbEmailLogin').onclick=async()=>{if(!cloud)return cloudMessage('Connect your Supabase project first.',true);
 const email=$('sbEmail').value.trim();
@@ -432,6 +440,7 @@ function focusTvControl(control){
  control.scrollIntoView({block:'nearest',inline:'nearest'});
 }
 window.streamHubBack=()=>{
+ if($('phonePairDialog').open){$('phonePairDialog').close();return true;}
  const focused=document.activeElement;
  const settings=$('settings');
  if(settings.open&&focused.closest('#settings')){
@@ -513,4 +522,8 @@ document.addEventListener('keydown',event=>{
   focusTvControl(nearest);
  }
 });
-</script></body></html>
+</script>
+<script src="vendor/qrcodegen.js"></script>
+<script src="device-pairing.js"></script>
+<script src="pair-tv.js"></script>
+</body></html>
