@@ -21,7 +21,12 @@ begin
     raise exception 'Invalid pairing request';
   end if;
   perform pg_catalog.pg_advisory_xact_lock(936178024);
-  delete from streamhub_private.device_pairing where expires_at <= now();
+  update streamhub_private.device_pairing
+    set id = p_id, submit_proof = p_submit, read_proof = p_read,
+        expires_at = now() + interval '5 minutes', payload = null
+    where id = (select id from streamhub_private.device_pairing
+      where expires_at <= now() order by expires_at limit 1);
+  if found then return; end if;
   if (select count(*) from streamhub_private.device_pairing) >= 64 then
     raise exception 'Pairing is busy. Try again in a few minutes.';
   end if;
@@ -43,15 +48,24 @@ returns boolean language sql security definer set search_path = '' as $$
 $$;
 
 create or replace function public.streamhub_pair_take(p_id uuid, p_read text)
-returns text language sql security definer set search_path = '' as $$
-  delete from streamhub_private.device_pairing
-  where id = p_id and read_proof = p_read and expires_at > now() and payload is not null
-  returning payload;
-$$;
+returns text language plpgsql security definer set search_path = '' as $
+declare
+  packet text;
+begin
+  select payload into packet from streamhub_private.device_pairing
+    where id = p_id and read_proof = p_read and expires_at > now() and payload is not null
+    for update;
+  if found then
+    update streamhub_private.device_pairing set expires_at = now(), payload = null where id = p_id;
+  end if;
+  return packet;
+end;
+$;
 
 create or replace function public.streamhub_pair_cancel(p_id uuid, p_read text)
 returns void language sql security definer set search_path = '' as $$
-  delete from streamhub_private.device_pairing where id = p_id and read_proof = p_read;
+  update streamhub_private.device_pairing set expires_at = now(), payload = null
+    where id = p_id and read_proof = p_read and expires_at > now();
 $$;
 
 revoke execute on function public.streamhub_pair_start(uuid,text,text),
