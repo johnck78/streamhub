@@ -36,7 +36,11 @@ body.tv-mode :is(button,input,summary):focus{outline:3px solid #8deaff;outline-o
 <button class="secondary" data-tv-target="manageToggle">Hidden titles</button>
 <button class="secondary" data-tv-target="sbUrl">Cloud Sync</button>
 <button class="secondary" data-tv-target="settings">Live catalog &amp; services</button>
-</nav><div id="tvHelp" class="tv-help" hidden>Remote: Arrows move between controls. Use the shortcuts to jump to a section.</div><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls"><div class="chip">Type: <strong>Movies + TV</strong></div><div class="chip">Mood: <strong>Surprise Me</strong></div><div class="chip">Length: <strong>Any Length</strong></div></div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div>
+</nav><div id="tvHelp" class="tv-help" hidden>Remote: Arrows move between controls. Use the shortcuts to jump to a section.</div><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls" aria-label="Recommendation filters">
+<button type="button" class="chip" id="filterType"></button>
+<button type="button" class="chip" id="filterMood"></button>
+<button type="button" class="chip" id="filterLength"></button>
+</div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div>
 <section class="cloudbox" id="manageBox"><div class="rowhead" style="margin:0 0 12px"><h3>Watched &amp; Not Interested</h3><button class="secondary" id="manageToggle">Manage hidden titles</button></div><p class="section-note">These titles are filtered out of every recommendation section. You can restore them anytime.</p><div id="manageArea" class="hide"></div></section>
 <section class="cloudbox" id="cloudBox"><h3>Cloud Sync</h3><p class="section-note">Share your watchlist and preferences across your Fire TVs, phone, and computer. Requires your personal Supabase project.</p>
 <div id="cloudControls">
@@ -86,6 +90,57 @@ const demo=[
 let catalog=demo.slice(), live=false, current=null, currentPage=1, showWatch=false, showManage=false, searchResults=null, searchTimer=null, searchSerial=0;let watch=new Set(JSON.parse(localStorage.getItem('streamhub_watch')||'[]'));let seen=new Set(JSON.parse(localStorage.getItem('streamhub_seen')||'[]'));let dismissed=new Set(JSON.parse(localStorage.getItem('streamhub_dismiss')||'[]'));let apiKey=localStorage.getItem('streamhub_tmdb_key')||'';let watched=new Set(JSON.parse(localStorage.getItem('streamhub_watched')||'[]'));let cloud=null,cloudUser=null,cloudConfig=null,cloudTitles=new Map();const titleMeta=new Map();
 const $=id=>document.getElementById(id);const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function store(){localStorage.setItem('streamhub_watch',JSON.stringify([...watch]));localStorage.setItem('streamhub_seen',JSON.stringify([...seen]));localStorage.setItem('streamhub_dismiss',JSON.stringify([...dismissed]));localStorage.setItem('streamhub_watched',JSON.stringify([...watched]));}
 function poster(t){return t.poster?`<img class="poster" src="https://image.tmdb.org/t/p/w342${escapeHtml(t.poster)}" alt="Poster for ${escapeHtml(t.title)}" loading="lazy">`:`<div class="poster placeholder">${escapeHtml(t.title)}</div>`}
+const recommendationFilters={
+ filterType:{label:'Type',options:[['Movies + TV',''],['Movies','movie'],['TV','tv']],index:0},
+ filterMood:{label:'Mood',options:[['Surprise Me',[]],['Action',[28,10759]],['Comedy',[35,10751]],['Drama',[18]],['Sci-Fi',[878,10765]],['Mystery',[9648,80]]],index:0},
+ filterLength:{label:'Length',options:[['Any length',null],['45 min or less',45],['Over 45 min',Infinity]],index:0}
+};
+const demoDetails=[
+ [[18,9648,10765],50],[[18,35],30],[[10759,10765],40],[[18,9648,10765],50],
+ [[10759,10765],55],[[18,10759],55],[[35,80,9648],50],[[10765,10759],50],
+ [[18,80],209],[[28,878],100],[[18,35],111],[[35,10751],101]
+];
+demo.forEach((title,i)=>{[title.genres,title.minutes]=demoDetails[i]});
+const runtimeRequests=new Map();
+function filterValue(id){
+ const filter=recommendationFilters[id];
+ return filter.options[filter.index][1];
+}
+function matchesRecommendation(title){
+ const type=filterValue('filterType');
+ const genres=filterValue('filterMood');
+ const length=filterValue('filterLength');
+ return (!type||title.type===type)&&(!genres.length||title.genres?.some(genre=>genres.includes(genre)))&&
+  (length===null||(title.minutes>0&&(length===45?title.minutes<=45:title.minutes>45)));
+}
+async function loadRecommendationRuntimes(titles){
+ for(let start=0;start<titles.length;start+=10){
+  const batch=titles.slice(start,start+10);
+  await Promise.all(batch.map(async title=>{
+   if(!runtimeRequests.has(title.id)){
+    const request=tmdb(title.type+'/'+title.tmdbId).then(details=>{
+     const episodeLengths=details.episode_run_time||[];
+     return details.runtime||episodeLengths[0]||details.last_episode_to_air?.runtime||0;
+    }).catch(()=>{runtimeRequests.delete(title.id);return 0});
+    runtimeRequests.set(title.id,request);
+   }
+   title.minutes=await runtimeRequests.get(title.id);
+  }));
+ }
+}
+let pickRequest=0;
+function initRecommendationFilters(){
+ for(const [id,filter] of Object.entries(recommendationFilters)){
+  const button=$(id);
+  const renderLabel=()=>{button.textContent=filter.label+': '+filter.options[filter.index][0]};
+  renderLabel();
+  button.onclick=()=>{
+   filter.index=(filter.index+1)%filter.options.length;
+   renderLabel();
+   choose();
+  };
+ }
+}
 function relevant(t){return t.providers.some(s=>enabled.includes(s))}function available(){return catalog.filter(t=>relevant(t)&&!dismissed.has(t.id)&&!watched.has(t.id))}
 function stashTitles(rows){for(const t of rows)titleMeta.set(t.id,t)}
 function preferenceAction(t,act){
@@ -104,8 +159,20 @@ area.innerHTML=items.length?items.map(t=>'<div class="manageRow"><span>'+escapeH
 area.querySelectorAll('[data-restore]').forEach(btn=>btn.onclick=()=>{const t=items.find(x=>x.id===btn.dataset.restore);if(t)preferenceAction(t,'restore')});
 }
 function score(t){const rating=Math.min(10,t.rating||5);const freshness=Math.max(0,1-(2026-(+t.year||2020))/17);const unseen=seen.has(t.id)?-5:0;const saved=watch.has(t.id)?-.35:0;return rating*.55+freshness*1.3+Math.random()*3.5+unseen+saved}
-function choose(){const c=available().filter(t=>!seen.has(t.id));const pool=c.length?c:available();if(!pool.length){current=null;renderFeature();return}const ranked=pool.map(t=>({t,s:score(t)})).sort((a,b)=>b.s-a.s);const top=ranked.slice(0,Math.min(8,ranked.length));current=top[Math.floor(Math.random()*Math.min(5,top.length))].t;seen.add(current.id);store();renderFeature()}
-function renderFeature(){if(!current){$('feature').innerHTML='<p>No matches. Re-enable a service or refresh the catalog.</p>';$('featureActions').innerHTML='';return}const t=current;$('feature').innerHTML=`${poster(t)}<div><div class="muted">${t.type==='tv'?'TV Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}</div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.overview||'Discover something different tonight.')}</p><div>${t.providers.map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join('')}</div><div class="muted">${live?'Subscription availability checked in the US':'Illustrative demo availability'}</div></div>`;$('featureActions').innerHTML=`<button class="secondary" id="savePick">${watch.has(t.id)?'✓ In Watchlist':'+ Watchlist'}</button><button class="secondary" id="watchedPick">${watched.has(t.id)?'✓ Watched':'Mark Watched'}</button><button class="secondary" id="skipPick">${dismissed.has(t.id)?'✓ Not Interested':'Not Interested'}</button>`;
+async function choose(){
+const request=++pickRequest;
+const candidates=available();
+if(live&&filterValue('filterLength')!==null){
+ $('feature').textContent='Checking runtimes…';
+ $('featureActions').replaceChildren();
+ const type=filterValue('filterType');
+ await loadRecommendationRuntimes(candidates.filter(t=>(!type||t.type===type)&&t.minutes===undefined));
+ if(request!==pickRequest)return;
+}
+const matches=candidates.filter(matchesRecommendation);
+const unseen=matches.filter(t=>!seen.has(t.id));
+const pool=unseen.length?unseen:matches;if(!pool.length){current=null;renderFeature();return}const ranked=pool.map(t=>({t,s:score(t)})).sort((a,b)=>b.s-a.s);const top=ranked.slice(0,Math.min(8,ranked.length));current=top[Math.floor(Math.random()*Math.min(5,top.length))].t;seen.add(current.id);store();renderFeature()}
+function renderFeature(){if(!current){$('feature').innerHTML='<p>No matches for this pick. Try different filters or refresh the catalog.</p>';$('featureActions').innerHTML='';return}const t=current;$('feature').innerHTML=`${poster(t)}<div><div class="muted">${t.type==='tv'?'TV Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}</div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.overview||'Discover something different tonight.')}</p><div>${t.providers.map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join('')}</div><div class="muted">${live?'Subscription availability checked in the US':'Illustrative demo availability'}</div></div>`;$('featureActions').innerHTML=`<button class="secondary" id="savePick">${watch.has(t.id)?'✓ In Watchlist':'+ Watchlist'}</button><button class="secondary" id="watchedPick">${watched.has(t.id)?'✓ Watched':'Mark Watched'}</button><button class="secondary" id="skipPick">${dismissed.has(t.id)?'✓ Not Interested':'Not Interested'}</button>`;
 $('savePick').onclick=()=>preferenceAction(t,'watchlist');$('watchedPick').onclick=()=>preferenceAction(t,'watched');$('skipPick').onclick=()=>preferenceAction(t,'not_interested')}
 function tile(t){return `<button class="tile" data-id="${escapeHtml(t.id)}"><div>${t.poster?`<img src="https://image.tmdb.org/t/p/w342${escapeHtml(t.poster)}" alt="" loading="lazy">`:`<div class="placeholder">${escapeHtml(t.title)}</div>`}</div><b>${escapeHtml(t.title)}</b><small>${t.type==='tv'?'Series':'Movie'} · ${escapeHtml(t.year)} · ★ ${Number(t.rating||0).toFixed(1)}${watch.has(t.id)?' · ♥':''}</small><span class="provider">${t.providers.map(escapeHtml).join(' · ')}</span></button>`}
 function renderSpotlights(){
@@ -123,7 +190,7 @@ $(note).textContent=live?items.length+' available titles • '+desc:'Demo mode �
 el.querySelectorAll('[data-id]').forEach(btn=>btn.onclick=()=>{current=items.find(t=>t.id===btn.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});
 }
 }
-function renderTiles(){renderSpotlights();renderManage();const q=$('search').value.trim().toLowerCase();if(live&&q.length>=2){renderSearchTiles();return}let items=available().filter(t=>(t.title+' '+t.overview).toLowerCase().includes(q));items=items.sort((a,b)=>Number(!!watch.has(b.id))-Number(!!watch.has(a.id))||b.rating-a.rating);$('tiles').innerHTML=items.length?items.map(tile).join(''):'<div class="empty">No matching titles in the current catalog.</div>';$('countLabel').textContent=`${items.length} ${live?'live catalog':'demo'} suggestions · Movies + TV · Any length`;$('tiles').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});if(showWatch)renderWatch()}
+function renderTiles(){renderSpotlights();renderManage();const q=$('search').value.trim().toLowerCase();if(live&&q.length>=2){renderSearchTiles();return}let items=available().filter(t=>(t.title+' '+t.overview).toLowerCase().includes(q));items=items.sort((a,b)=>Number(!!watch.has(b.id))-Number(!!watch.has(a.id))||b.rating-a.rating);$('tiles').innerHTML=items.length?items.map(tile).join(''):'<div class="empty">No matching titles in the current catalog.</div>';$('countLabel').textContent=`${items.length} ${live?'live catalog':'demo'} suggestions`;$('tiles').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});if(showWatch)renderWatch()}
 function renderWatch(){const items=[...titleMeta.values()].filter(t=>watch.has(t.id));$('watchArea').classList.toggle('hide',!showWatch);$('watchArea').innerHTML=showWatch?(items.length?`<div class="tiles">${items.map(tile).join('')}</div>`:'<div class="empty">Your watchlist is empty. Save titles to see them here.</div>'):'';$('watchArea').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);renderFeature();window.scrollTo({top:0,behavior:'smooth'})})}
 function renderServices(){$('services').innerHTML=serviceNames.map(s=>`<button class="service ${enabled.includes(s)?'active':''}" data-s="${s}" aria-pressed="${enabled.includes(s)}">${enabled.includes(s)?'✓ ':''}${s==='Apple TV Plus'?'Apple TV+':escapeHtml(s)}</button>`).join('');$('services').querySelectorAll('[data-s]').forEach(el=>el.onclick=async()=>{const s=el.dataset.s;enabled=enabled.includes(s)?enabled.filter(x=>x!==s):[...enabled,s];localStorage.setItem('streamhub_services',JSON.stringify(enabled));renderServices();if(tvMode)$('services').querySelector('[data-s="'+s+'"]').focus();cloudSaveServices();if(live)await loadLive();else {renderTiles();choose()}})}
 async function tmdb(endpoint,params={}){const url=new URL('https://api.themoviedb.org/3/'+endpoint);url.searchParams.set('api_key',apiKey);url.searchParams.set('language','en-US');Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,String(v)));const response=await fetch(url);if(!response.ok)throw Error(`TMDB returned ${response.status}`);return response.json()}
@@ -152,7 +219,7 @@ if(mapped&&enabled.includes(mapped))ids[kind].push(p.provider_id)
 const make=(x,kind,rank,tag)=>({
 id:kind+'-'+x.id,tmdbId:x.id,title:x.title||x.name,type:kind,
 year:(x.release_date||x.first_air_date||'').slice(0,4)||'—',
-rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[],
+rating:x.vote_average||0,overview:x.overview,poster:x.poster_path,providers:[],genres:x.genre_ids||[],
 ...(tag?{[tag]:rank}:{})});
 const source=[...(popularResponse.results||[]).map((x,i)=>make(x,'movie',i,'popularRank')),
 ...(trendingResponse.results||[]).map((x,i)=>make(x,'tv',i,'trendingRank'))];
@@ -315,12 +382,27 @@ $('tiles').innerHTML=matches.length?matches.map(t=>tile(t)).join(''):'<div class
 $('tiles').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=matches.find(t=>t.id===el.dataset.id);renderFeature();window.scrollTo({top:0,behavior:'smooth'})});
 }
 function toDemo(){live=false;catalog=demo.slice();stashTitles(catalog);$('status').textContent='Demo mode · Illustrative availability';$('modeNote').textContent='Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.';renderTiles();choose()}
-$('surprise').onclick=choose;$('refresh').onclick=async()=>{if(live)await loadLive();else{catalog=demo.slice().sort(()=>Math.random()-.5);renderTiles();choose()}};$('search').addEventListener('input',()=>{if(searchTimer)clearTimeout(searchTimer);const q=$('search').value.trim();if(live&&q.length>=2){searchTimer=setTimeout(()=>searchAllTitles(q),380)}else{searchSerial++;searchResults=null;renderTiles()}});$('watchToggle').onclick=()=>{showWatch=!showWatch;$('watchToggle').textContent=showWatch?'Hide watchlist':'Show watchlist';renderWatch()};$('manageToggle').onclick=()=>{showManage=!showManage;$('manageToggle').textContent=showManage?'Hide hidden titles':'Manage hidden titles';renderManage()};$('apiKey').value=apiKey;$('connect').onclick=async()=>{$('connectMessage').classList.remove('error');apiKey=$('apiKey').value.trim();if(!apiKey){$('connectMessage').textContent='Paste your TMDB API v3 key into the field first.';return}await loadLive()};$('disconnect').onclick=()=>{localStorage.removeItem('streamhub_tmdb_key');apiKey='';$('apiKey').value='';toDemo()};stashTitles(catalog);renderServices();renderTiles();choose();initCloud();let tvMode=localStorage.getItem('streamhub_tv_mode')==='true';function applyTvMode(){document.body.classList.toggle('tv-mode',tvMode);$('tvToggle').textContent='TV Mode: '+(tvMode?'On':'Off');$('tvToggle').setAttribute('aria-pressed',String(tvMode));$('tvHelp').hidden=!tvMode;localStorage.setItem('streamhub_tv_mode',String(tvMode))}$('tvToggle').onclick=()=>{tvMode=!tvMode;applyTvMode();$('tvToggle').focus()};applyTvMode();if(apiKey){$('status').textContent='Restoring live TMDB catalog…';$('connectMessage').textContent='Restoring your live recommendations…';loadLive()}
+initRecommendationFilters();$('surprise').onclick=choose;$('refresh').onclick=async()=>{if(live)await loadLive();else{catalog=demo.slice().sort(()=>Math.random()-.5);renderTiles();choose()}};$('search').addEventListener('input',()=>{if(searchTimer)clearTimeout(searchTimer);const q=$('search').value.trim();if(live&&q.length>=2){searchTimer=setTimeout(()=>searchAllTitles(q),380)}else{searchSerial++;searchResults=null;renderTiles()}});$('watchToggle').onclick=()=>{showWatch=!showWatch;$('watchToggle').textContent=showWatch?'Hide watchlist':'Show watchlist';renderWatch()};$('manageToggle').onclick=()=>{showManage=!showManage;$('manageToggle').textContent=showManage?'Hide hidden titles':'Manage hidden titles';renderManage()};$('apiKey').value=apiKey;$('connect').onclick=async()=>{$('connectMessage').classList.remove('error');apiKey=$('apiKey').value.trim();if(!apiKey){$('connectMessage').textContent='Paste your TMDB API v3 key into the field first.';return}await loadLive()};$('disconnect').onclick=()=>{localStorage.removeItem('streamhub_tmdb_key');apiKey='';$('apiKey').value='';toDemo()};stashTitles(catalog);renderServices();renderTiles();choose();initCloud();let tvMode=localStorage.getItem('streamhub_tv_mode')==='true';function applyTvMode(){document.body.classList.toggle('tv-mode',tvMode);$('tvToggle').textContent='TV Mode: '+(tvMode?'On':'Off');$('tvToggle').setAttribute('aria-pressed',String(tvMode));$('tvHelp').hidden=!tvMode;localStorage.setItem('streamhub_tv_mode',String(tvMode))}$('tvToggle').onclick=()=>{tvMode=!tvMode;applyTvMode();$('tvToggle').focus()};applyTvMode();if(apiKey){$('status').textContent='Restoring live TMDB catalog…';$('connectMessage').textContent='Restoring your live recommendations…';loadLive()}
 
 function focusTvControl(control){
  control.focus({preventScroll:true});
  control.scrollIntoView({block:'nearest',inline:'nearest'});
 }
+window.streamHubBack=()=>{
+ const focused=document.activeElement;
+ const settings=$('settings');
+ if(settings.open&&focused.closest('#settings')){
+  settings.open=false;
+  focusTvControl(settings.querySelector('summary'));
+  return true;
+ }
+ if(!focused.closest('.hero,.tv-nav,header')&&window.scrollY>0){
+  focusTvControl(document.querySelector('[data-tv-target="surprise"]'));
+  window.scrollTo(0,0);
+  return true;
+ }
+ return false;
+};
 document.querySelectorAll('[data-tv-target]').forEach(button=>{
  button.addEventListener('click',()=>{
   const target=$(button.dataset.tvTarget);
