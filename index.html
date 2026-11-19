@@ -4,22 +4,39 @@
 
 .header-tools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .tv-help{background:#14344c;color:#b8e9fa;border:1px solid #387895;border-radius:12px;padding:14px;margin-bottom:18px}
-body.tv-mode{font-size:20px}
-body.tv-mode main{max-width:none;padding:22px 3.5vw 80px}
-body.tv-mode header{padding:22px 3.5vw}
-body.tv-mode h2{font-size:clamp(34px,4vw,62px)}
-body.tv-mode .hero{grid-template-columns:1fr 1fr;gap:24px}
-body.tv-mode .panel{min-height:340px}
-body.tv-mode .poster{width:175px}
-body.tv-mode button{min-height:54px;font-size:18px}
-body.tv-mode .spotlight .tiles{display:flex;overflow-x:auto;gap:18px;scroll-snap-type:x mandatory;padding:10px 8px 25px;scrollbar-width:thin}
-body.tv-mode .spotlight .tile{flex:0 0 clamp(170px,15vw,240px);min-width:0;min-height:350px;scroll-snap-align:start}
-body.tv-mode .tile b{font-size:19px}
-body.tv-mode .tile small,body.tv-mode .tile .provider{font-size:15px}
-body.tv-mode #tiles{grid-template-columns:repeat(auto-fill,minmax(195px,1fr))}
-body.tv-mode :is(button,input,summary):focus-visible{outline:4px solid #8deaff;outline-offset:4px;box-shadow:0 0 0 7px #10304a,0 0 25px #59bfff66;position:relative;z-index:2}
-@media(max-width:850px){body.tv-mode .hero{grid-template-columns:1fr}body.tv-mode .poster{width:115px}body.tv-mode .spotlight .tile{flex-basis:170px}body.tv-mode #tiles{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}}
-</style></head><body><header><div><h1>STREAM<span>HUB</span></h1><div class="tag">FIND YOUR NEXT FAVORITE</div></div><div class="header-tools"><div class="status" id="status">Demo mode · No API key needed</div><button class="secondary" id="tvToggle" aria-pressed="false">TV Mode: Off</button></div></header><main><div id="tvHelp" class="tv-help" hidden>Remote: Arrow keys move · Select opens a title · Back returns to browsing.</div><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls"><div class="chip">Type: <strong>Movies + TV</strong></div><div class="chip">Mood: <strong>Surprise Me</strong></div><div class="chip">Length: <strong>Any Length</strong></div></div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div>
+.tv-nav{display:none}
+body.tv-mode{font-size:16px}
+body.tv-mode header{padding:12px 3vw}
+body.tv-mode main{max-width:none;padding:14px 3vw 40px}
+body.tv-mode .tv-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+body.tv-mode .tv-help{padding:8px 12px;margin-bottom:12px;font-size:14px}
+body.tv-mode h2{font-size:clamp(24px,2.8vw,38px);margin:8px 0}
+body.tv-mode .hero{grid-template-columns:1fr 1fr;gap:14px}
+body.tv-mode .panel{padding:15px;min-width:0}
+body.tv-mode .feature{min-height:0;gap:12px;margin:8px 0}
+body.tv-mode .feature h3{font-size:21px}
+body.tv-mode .poster{width:104px}
+body.tv-mode .controls{margin:10px 0}
+body.tv-mode button{min-height:40px;font-size:15px;padding:7px 11px}
+body.tv-mode .spotlight,.tv-mode .cloudbox,.tv-mode .settings{margin-top:16px}
+body.tv-mode .cloudbox,.tv-mode .settings{padding:14px}
+body.tv-mode .rowhead{margin:16px 0 8px}
+body.tv-mode .spotlight .tiles{display:flex;overflow-x:auto;gap:10px;padding:7px 7px 12px}
+body.tv-mode .spotlight .tile{flex:0 0 clamp(108px,12vw,160px);min-width:0}
+body.tv-mode .tile{min-height:0}
+body.tv-mode .tile b{font-size:15px}
+body.tv-mode .tile small,.tv-mode .tile .provider{font-size:12px}
+body.tv-mode #tiles{grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px}
+body.tv-mode :is(button,input,summary):focus{outline:3px solid #8deaff;outline-offset:2px;position:relative;z-index:2}
+@media(max-width:700px){body.tv-mode .hero{grid-template-columns:1fr}}
+</style></head><body><header><div><h1>STREAM<span>HUB</span></h1><div class="tag">FIND YOUR NEXT FAVORITE</div></div><div class="header-tools"><div class="status" id="status">Demo mode · No API key needed</div><button class="secondary" id="tvToggle" aria-pressed="false">TV Mode: Off</button></div></header><main><nav class="tv-nav" aria-label="Jump to section">
+<button class="secondary" data-tv-target="surprise">Home</button>
+<button class="secondary" data-tv-target="search">Search</button>
+<button class="secondary" data-tv-target="watchToggle">Watchlist</button>
+<button class="secondary" data-tv-target="manageToggle">Hidden titles</button>
+<button class="secondary" data-tv-target="sbUrl">Cloud Sync</button>
+<button class="secondary" data-tv-target="settings">Live catalog &amp; services</button>
+</nav><div id="tvHelp" class="tv-help" hidden>Remote: Arrows move between controls. Use the shortcuts to jump to a section.</div><div class="hero"><section class="panel"><div class="eyebrow">Your recommendation engine</div><h2>What should we watch tonight?</h2><p>Great discoveries, across your subscriptions. No endless scrolling, no rental surprises.</p><div class="controls"><div class="chip">Type: <strong>Movies + TV</strong></div><div class="chip">Mood: <strong>Surprise Me</strong></div><div class="chip">Length: <strong>Any Length</strong></div></div><div class="actions"><button class="primary" id="surprise">✦ Surprise Me</button><button class="secondary" id="refresh">↻ Fresh Recommendations</button></div><p class="muted" id="modeNote">Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.</p></section><section class="panel"><div class="eyebrow">Tonight's pick</div><div class="feature" id="feature"><div class="poster placeholder">Ready to discover?</div></div><div class="actions" id="featureActions"></div></section></div><section class="spotlight" id="popularSection"><div class="rowhead"><div><h3>🍿 Popular Movies</h3><p class="section-note" id="popularNote">Popular titles included with your services</p></div></div><div class="tiles" id="popularTiles"></div></section><section class="spotlight" id="trendingSection"><div class="rowhead"><div><h3>📺 Trending TV Series</h3><p class="section-note" id="trendingNote">Series trending this week, available to stream</p></div></div><div class="tiles" id="trendingTiles"></div></section><section class="spotlight" id="newSection"><div class="rowhead"><div><h3>New This Week</h3><p class="section-note" id="newNote">Newly released movies and series from the past 7 days, when included in your subscriptions</p></div></div><div class="tiles" id="newTiles"></div></section><section class="spotlight" id="gemsSection"><div class="rowhead"><div><h3>Top Rated Hidden Gems</h3><p class="section-note" id="gemsNote">Highly rated, less-reviewed picks available to stream</p></div></div><div class="tiles" id="gemsTiles"></div></section><div class="rowhead"><div><h3>Recommended for You</h3><p class="section-note" id="countLabel">A mix of movies and television</p></div><input class="search" id="search" aria-label="Search titles" placeholder="Search titles..."/></div><div class="tiles" id="tiles"></div><div class="rowhead"><h3>Your Watchlist</h3><button class="secondary" id="watchToggle">Show watchlist</button></div><div id="watchArea" class="hide"></div>
 <section class="cloudbox" id="manageBox"><div class="rowhead" style="margin:0 0 12px"><h3>Watched &amp; Not Interested</h3><button class="secondary" id="manageToggle">Manage hidden titles</button></div><p class="section-note">These titles are filtered out of every recommendation section. You can restore them anytime.</p><div id="manageArea" class="hide"></div></section>
 <section class="cloudbox" id="cloudBox"><h3>Cloud Sync</h3><p class="section-note">Share your watchlist and preferences across your Fire TVs, phone, and computer. Requires your personal Supabase project.</p>
 <div id="cloudControls">
@@ -108,7 +125,7 @@ el.querySelectorAll('[data-id]').forEach(btn=>btn.onclick=()=>{current=items.fin
 }
 function renderTiles(){renderSpotlights();renderManage();const q=$('search').value.trim().toLowerCase();if(live&&q.length>=2){renderSearchTiles();return}let items=available().filter(t=>(t.title+' '+t.overview).toLowerCase().includes(q));items=items.sort((a,b)=>Number(!!watch.has(b.id))-Number(!!watch.has(a.id))||b.rating-a.rating);$('tiles').innerHTML=items.length?items.map(tile).join(''):'<div class="empty">No matching titles in the current catalog.</div>';$('countLabel').textContent=`${items.length} ${live?'live catalog':'demo'} suggestions · Movies + TV · Any length`;$('tiles').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);if(current){seen.add(current.id);store();renderFeature();window.scrollTo({top:0,behavior:'smooth'})}});if(showWatch)renderWatch()}
 function renderWatch(){const items=[...titleMeta.values()].filter(t=>watch.has(t.id));$('watchArea').classList.toggle('hide',!showWatch);$('watchArea').innerHTML=showWatch?(items.length?`<div class="tiles">${items.map(tile).join('')}</div>`:'<div class="empty">Your watchlist is empty. Save titles to see them here.</div>'):'';$('watchArea').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=items.find(t=>t.id===el.dataset.id);renderFeature();window.scrollTo({top:0,behavior:'smooth'})})}
-function renderServices(){$('services').innerHTML=serviceNames.map(s=>`<button class="service ${enabled.includes(s)?'active':''}" data-s="${s}" aria-pressed="${enabled.includes(s)}">${enabled.includes(s)?'✓ ':''}${s==='Apple TV Plus'?'Apple TV+':escapeHtml(s)}</button>`).join('');$('services').querySelectorAll('[data-s]').forEach(el=>el.onclick=async()=>{const s=el.dataset.s;enabled=enabled.includes(s)?enabled.filter(x=>x!==s):[...enabled,s];localStorage.setItem('streamhub_services',JSON.stringify(enabled));renderServices();cloudSaveServices();if(live)await loadLive();else {renderTiles();choose()}})}
+function renderServices(){$('services').innerHTML=serviceNames.map(s=>`<button class="service ${enabled.includes(s)?'active':''}" data-s="${s}" aria-pressed="${enabled.includes(s)}">${enabled.includes(s)?'✓ ':''}${s==='Apple TV Plus'?'Apple TV+':escapeHtml(s)}</button>`).join('');$('services').querySelectorAll('[data-s]').forEach(el=>el.onclick=async()=>{const s=el.dataset.s;enabled=enabled.includes(s)?enabled.filter(x=>x!==s):[...enabled,s];localStorage.setItem('streamhub_services',JSON.stringify(enabled));renderServices();if(tvMode)$('services').querySelector('[data-s="'+s+'"]').focus();cloudSaveServices();if(live)await loadLive();else {renderTiles();choose()}})}
 async function tmdb(endpoint,params={}){const url=new URL('https://api.themoviedb.org/3/'+endpoint);url.searchParams.set('api_key',apiKey);url.searchParams.set('language','en-US');Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,String(v)));const response=await fetch(url);if(!response.ok)throw Error(`TMDB returned ${response.status}`);return response.json()}
 function norm(s){return (s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
 function mapProvider(name){const n=norm(name);if(n.includes('netflix'))return 'Netflix';if(n.includes('amazonprimevideo')||n==='primevideo')return 'Prime Video';if(n==='hulu')return 'Hulu';if(n.includes('disneyplus'))return 'Disney Plus';if(n==='max'||n==='hbomax')return 'Max';if(n.includes('peacock'))return 'Peacock';if(n.includes('paramountplus'))return 'Paramount Plus';if(n==='appletvplus'||n==='appletvplusamazonchannel')return 'Apple TV Plus';return null}
@@ -300,28 +317,74 @@ $('tiles').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{current=mat
 function toDemo(){live=false;catalog=demo.slice();stashTitles(catalog);$('status').textContent='Demo mode · Illustrative availability';$('modeNote').textContent='Demo titles and availability are illustrative, not live-verified. Add a TMDB key below for live results.';renderTiles();choose()}
 $('surprise').onclick=choose;$('refresh').onclick=async()=>{if(live)await loadLive();else{catalog=demo.slice().sort(()=>Math.random()-.5);renderTiles();choose()}};$('search').addEventListener('input',()=>{if(searchTimer)clearTimeout(searchTimer);const q=$('search').value.trim();if(live&&q.length>=2){searchTimer=setTimeout(()=>searchAllTitles(q),380)}else{searchSerial++;searchResults=null;renderTiles()}});$('watchToggle').onclick=()=>{showWatch=!showWatch;$('watchToggle').textContent=showWatch?'Hide watchlist':'Show watchlist';renderWatch()};$('manageToggle').onclick=()=>{showManage=!showManage;$('manageToggle').textContent=showManage?'Hide hidden titles':'Manage hidden titles';renderManage()};$('apiKey').value=apiKey;$('connect').onclick=async()=>{$('connectMessage').classList.remove('error');apiKey=$('apiKey').value.trim();if(!apiKey){$('connectMessage').textContent='Paste your TMDB API v3 key into the field first.';return}await loadLive()};$('disconnect').onclick=()=>{localStorage.removeItem('streamhub_tmdb_key');apiKey='';$('apiKey').value='';toDemo()};stashTitles(catalog);renderServices();renderTiles();choose();initCloud();let tvMode=localStorage.getItem('streamhub_tv_mode')==='true';function applyTvMode(){document.body.classList.toggle('tv-mode',tvMode);$('tvToggle').textContent='TV Mode: '+(tvMode?'On':'Off');$('tvToggle').setAttribute('aria-pressed',String(tvMode));$('tvHelp').hidden=!tvMode;localStorage.setItem('streamhub_tv_mode',String(tvMode))}$('tvToggle').onclick=()=>{tvMode=!tvMode;applyTvMode();$('tvToggle').focus()};applyTvMode();if(apiKey){$('status').textContent='Restoring live TMDB catalog…';$('connectMessage').textContent='Restoring your live recommendations…';loadLive()}
 
-document.addEventListener('keydown',e=>{
- if((e.key==='Escape'||e.key==='Backspace')&&tvMode&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){
-  e.preventDefault();
-  if($('settings').open){$('settings').open=false;$('tvToggle').focus();return}
-  $('surprise').focus();$('surprise').scrollIntoView({block:'nearest'});return
+function focusTvControl(control){
+ control.focus({preventScroll:true});
+ control.scrollIntoView({block:'nearest',inline:'nearest'});
+}
+document.querySelectorAll('[data-tv-target]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  const target=$(button.dataset.tvTarget);
+  focusTvControl(target.tagName==='DETAILS'?target.querySelector('summary'):target);
+ });
+});
+document.addEventListener('keydown',event=>{
+ if(!tvMode||event.defaultPrevented||event.isComposing)return;
+ const key=event.key;
+ const focused=document.activeElement;
+ const editing=focused.matches('input,textarea');
+ if(key==='Escape'||(key==='Backspace'&&!editing)){
+  event.preventDefault();
+  if(editing&&key==='Escape'){
+   const section=focused.closest('section,details');
+   const previous=section?.querySelector('summary,button')||$('surprise');
+   focusTvControl(previous);
+  }else if($('settings').open&&focused.closest('#settings')){
+   $('settings').open=false;
+   focusTvControl($('settings').querySelector('summary'));
+  }else{
+   focusTvControl(document.querySelector('[data-tv-target="surprise"]'));
+  }
+  return;
  }
- if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;
- if(['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))return;
- const nodes=[...document.querySelectorAll('button,summary,input')].filter(n=>n.getClientRects().length&&!n.disabled&&!n.closest('[hidden]')&&(!n.closest('details')||n.closest('details').open||n.tagName==='SUMMARY'));
- if(!nodes.length)return;
- const focused=nodes.includes(document.activeElement)?document.activeElement:null;
- if(!focused){e.preventDefault();$('surprise').focus();return}
- const r=focused.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
- let best=Infinity,target=null;
- for(const n of nodes){
-  if(n===focused)continue;
-  const b=n.getBoundingClientRect(),dx=b.left+b.width/2-cx,dy=b.top+b.height/2-cy;
-  const h=e.key==='ArrowLeft'||e.key==='ArrowRight';
-  if(e.key==='ArrowRight'&&dx<=6||e.key==='ArrowLeft'&&dx>=-6||e.key==='ArrowDown'&&dy<=6||e.key==='ArrowUp'&&dy>=-6)continue;
-  const primary=h?Math.abs(dx):Math.abs(dy),secondary=h?Math.abs(dy):Math.abs(dx),score=primary+secondary*2.6;
-  if(score<best){best=score;target=n}
+ if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(key))return;
+ const horizontal=key==='ArrowLeft'||key==='ArrowRight';
+ if(editing&&horizontal)return;
+ const direction=key==='ArrowRight'||key==='ArrowDown'?1:-1;
+ const controls=[...document.querySelectorAll('button,summary,input,a[href]')].filter(control=>{
+  const details=control.closest('details');
+  return !control.disabled&&control.getClientRects().length&&(!details||details.open||control.tagName==='SUMMARY');
+ });
+ if(!controls.includes(focused)){
+  event.preventDefault();
+  focusTvControl($('surprise'));
+  return;
  }
- if(target){e.preventDefault();target.focus();target.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'})}
+ const origin=focused.getBoundingClientRect();
+ let nearest=null;
+ let bestScore=Infinity;
+ for(const control of controls){
+  if(control===focused)continue;
+  const rect=control.getBoundingClientRect();
+  const carousel=control.closest('.spotlight .tiles');
+  if(!horizontal&&carousel){
+   const bounds=carousel.getBoundingClientRect();
+   if(rect.right<=bounds.left||rect.left>=bounds.right)continue;
+  }
+  const dx=(rect.left+rect.right-origin.left-origin.right)/2;
+  const dy=(rect.top+rect.bottom-origin.top-origin.bottom)/2;
+  const forward=(horizontal?dx:dy)*direction;
+  if(forward<=4)continue;
+  const side=horizontal?Math.max(0,rect.top-origin.bottom,origin.top-rect.bottom)
+   :Math.max(0,rect.left-origin.right,origin.left-rect.right);
+  const score=forward+side*4+Math.abs(horizontal?dy:dx)*0.25;
+  if(score<bestScore){
+   nearest=control;
+   bestScore=score;
+  }
+ }
+ if(nearest){
+  event.preventDefault();
+  focusTvControl(nearest);
+ }
 });
 </script></body></html>
