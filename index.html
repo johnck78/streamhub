@@ -458,7 +458,8 @@ document.addEventListener('keydown',event=>{
   if(forward<=4)continue;
   const side=horizontal?Math.max(0,rect.top-origin.bottom,origin.top-rect.bottom)
    :Math.max(0,rect.left-origin.right,origin.left-rect.right);
-  const score=forward+side*4+Math.abs(horizontal?dy:dx)*0.25;
+  const rowPenalty=horizontal&&side>0?window.innerWidth:0;
+  const score=rowPenalty+forward+side*4+Math.abs(horizontal?dy:dx)*0.25;
   if(score<bestScore){
    nearest=control;
    bestScore=score;
