@@ -1,6 +1,7 @@
 package com.streamhub.firetv;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,14 +16,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.graphics.Color;
 import android.view.Gravity;
-import android.text.method.LinkMovementMethod;
-import android.text.SpannableString;
-import android.text.style.URLSpan;
 
 public class MainActivity extends Activity {
     private static final String HOME = "https://johnck78.github.io/streamhub/";
     private static final String HOST = "johnck78.github.io";
     private WebView webView;
+    private AlertDialog exitDialog;
     private FrameLayout root;
     private TextView errorView;
     private boolean mainFrameLoadFailed = false;
@@ -92,17 +91,40 @@ public class MainActivity extends Activity {
         errorView.requestFocus();
     }
 
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE) {
-            // Web app handles Back within its UI; if necessary, Android's Back exits.
-            if (webView.canGoBack()) {
-                webView.goBack();
-            } else {
-                webView.evaluateJavascript("document.getElementById('surprise')?.focus();document.getElementById('surprise')?.scrollIntoView({block:'nearest'});", null);
-            }
+    @Override public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+            return;
+        }
+        if (mainFrameLoadFailed) {
+            showExitDialog();
+            return;
+        }
+        webView.evaluateJavascript(
+            "typeof window.streamHubBack === 'function' && window.streamHubBack()",
+            handled -> {
+                if (!"true".equals(handled) && !isFinishing() && !isDestroyed()) {
+                    showExitDialog();
+                }
+            });
+    }
+
+    @Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_ESCAPE && !event.isCanceled()) {
+            onBackPressed();
             return true;
         }
-        return super.onKeyDown(keyCode, event);
+        return super.onKeyUp(keyCode, event);
+    }
+
+    private void showExitDialog() {
+        if (exitDialog != null && exitDialog.isShowing()) return;
+        exitDialog = new AlertDialog.Builder(this)
+            .setTitle("Exit StreamHub?")
+            .setNegativeButton("Keep browsing", (dialog, which) -> dialog.dismiss())
+            .setPositiveButton("Exit", (dialog, which) -> finish())
+            .show();
+        exitDialog.getButton(AlertDialog.BUTTON_NEGATIVE).requestFocus();
     }
 
     @Override protected void onDestroy() {
