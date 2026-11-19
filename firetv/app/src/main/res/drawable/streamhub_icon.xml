@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="#101F35"/>
-            <corners android:radius="22dp"/>
-        </shape>
-    </item>
-    <item android:left="16dp" android:right="16dp" android:top="20dp" android:bottom="20dp">
-        <shape android:shape="rectangle">
-            <solid android:color="#60C5DF"/>
-            <corners android:radius="10dp"/>
-        </shape>
-    </item>
-    <item android:left="37dp" android:right="37dp" android:top="38dp" android:bottom="38dp">
-        <shape android:shape="rectangle">
-            <solid android:color="#101F35"/>
-            <corners android:radius="3dp"/>
-        </shape>
-    </item>
-</layer-list>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#101F35" android:pathData="M14,0H94Q108,0 108,14V94Q108,108 94,108H14Q0,108 0,94V14Q0,0 14,0Z"/>
+    <group android:translateX="0" android:translateY="0">
+        <path android:fillColor="#60C5DF" android:pathData="M25,24H83Q90,24 90,31V77Q90,84 83,84H25Q18,84 18,77V31Q18,24 25,24Z"/>
+        <path android:fillColor="#101F35" android:pathData="M44,38L70,54L44,70Z"/>
+    </group>
+</vector>
