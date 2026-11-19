@@ -48,7 +48,7 @@ returns boolean language sql security definer set search_path = '' as $$
 $$;
 
 create or replace function public.streamhub_pair_take(p_id uuid, p_read text)
-returns text language plpgsql security definer set search_path = '' as $
+returns text language plpgsql security definer set search_path = '' as $$
 declare
   packet text;
 begin
@@ -60,7 +60,7 @@ begin
   end if;
   return packet;
 end;
-$;
+$$;
 
 create or replace function public.streamhub_pair_cancel(p_id uuid, p_read text)
 returns void language sql security definer set search_path = '' as $$
